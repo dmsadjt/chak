@@ -60,5 +60,5 @@ func (braveMgr *BraveManager) Search(SzQuery string) ([]SearchResultData, error)
 		})
 	}
 
-	return results, nil
+	return searchResults, nil
 }
