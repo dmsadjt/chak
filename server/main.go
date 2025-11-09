@@ -1,15 +1,18 @@
 package main
 
 import (
-	"os"
-	"fmt"
-	"net/http"
-	"log"
-	"chak-server/internal/search"
+	"chak-server/internal/embedding"
 	"chak-server/internal/handler"
-	"chak-server/internal/prompt"
-	"chak-server/internal/ollama"
+	"chak-server/internal/memory"
 	"chak-server/internal/middleware"
+	"chak-server/internal/ollama"
+	"chak-server/internal/prompt"
+	"chak-server/internal/search"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/joho/godotenv"
 )
 
@@ -28,8 +31,10 @@ func main() {
 	searchManager := search.NewBraveManager(szApiKey)
 	promptManager := prompt.NewPromptManager()
 	ollamaManager := ollama.NewDefaultOllamaManager("http://localhost:11434")
+	embeddingManager := embedding.NewOllamaEmbedding("all-minilm:33m","http://localhost:11434")
+	memoryManager := memory.NewMemoryManager(embeddingManager)
 
-	chatManager := handler.NewChatHandlerManager(searchManager, promptManager, ollamaManager)
+	chatManager := handler.NewChatHandlerManager(searchManager, promptManager, ollamaManager, memoryManager)
 
 	chatHandler := http.HandlerFunc(chatManager.HandleChat)
 	logMiddleware := &middleware.LoggerMiddleware{}

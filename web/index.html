@@ -3,46 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ollama Chat</title>
+    <title>Chak</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🤖 Ollama Chat</h1>
-            <div style="display: flex; gap: 15px; align-items: center;">
+        <div class="sidebar">
+            <div class="header">
+                <h1>Chak's Setting</h1>
+            </div>
+            <div class="sidebar-body">
+                <h2 style>Embedding Model</h2>
+                <select id="embeddingModelSelect" class="model-select">
+                    <option value="">Loading embedding models...</option>
+                </select>
+                <h2>Chat Model</h2>
                 <select id="modelSelect" class="model-select">
                     <option value="">Loading models...</option>
                 </select>
-                <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
-                    <input type="checkbox" id="chatMode" checked style="cursor: pointer;">
-                    Chat Mode
-                </label>
-                <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
-                    <input type="checkbox" id="webSearch" style="cursor: pointer;">
-                    🔍 Web Search
-                </label>
             </div>
         </div>
-        
-        <div class="chat-area" id="chatArea">
-            <div class="message assistant">
-                <div class="message-avatar">AI</div>
-                <div class="message-content">
-                    Hello! I'm your local AI assistant powered by Ollama. How can I help you today?
+        <div class="chat-bar">
+            <div class="header">
+                <h1>Chak</h1>
+            </div>
+            
+            <div class="chat-area" id="chatArea">
+                <div class="message assistant">
+                    <div class="message-avatar">AI</div>
+                    <div class="message-content">
+                        Hello! I'm your local AI assistant powered by Ollama. How can I help you today?
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="input-area">
-            <div class="input-container">
-                <input 
-                    type="text" 
-                    id="userInput" 
-                    placeholder="Type your message here..."
-                    autocomplete="off"
-                >
-                <button id="sendBtn">Send</button>
+            
+            <div class="input-area">
+                <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; justify-content: end">
+                    <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;" class="toggle">
+                        <input type="checkbox" id="chatMode" checked style="cursor: pointer;">
+                        <span class="slider"></span>
+                        Chat Mode
+                    </label>
+                    <label class="toggle" style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
+                        <input type="checkbox" id="webSearch" style="cursor: pointer;">
+                        <span class="slider"></span>
+                        🔍 Web Search
+                    </label>
+                </div>
+                <div class="input-container">
+                    <input 
+                        type="text" 
+                        id="userInput" 
+                        placeholder="Type your message here..."
+                        autocomplete="off"
+                    >
+                    <button id="sendBtn">Send</button>
+                </div>
             </div>
         </div>
     </div>
@@ -55,76 +71,12 @@
         const modelSelect = document.getElementById('modelSelect');
         const chatMode = document.getElementById('chatMode');
         const webSearch = document.getElementById('webSearch');
+        const embeddingModelSelect = document.getElementById('embeddingModelSelect');
 
         let currentModel = '';
         let conversationHistory = [];
         const OLLAMA_URL = 'http://localhost:11434';
 
-        // Web search function using DuckDuckGo
-        async function performWebSearch(query) {
-            console.log("searching")
-            try {
-                const response = await fetch(`http://localhost:5000/search?q=${encodeURIComponent(query)}`);
-                const data = await response.json();
-
-                console.log(data);
-                
-                // DuckDuckGo returns results in RelatedTopics
-                let results = [];
-                
-                if (data.AbstractText) {
-
-                    console.log(data.AbstractText)
-                    results.push({
-                        title: data.Heading || 'Summary',
-                        snippet: data.AbstractText,
-                        url: data.AbstractURL
-                    });
-                    console.log(results);
-                }
-                
-                if (data.RelatedTopics) {
-                    console.log(data.RelatedTopics)
-                    for (let topic of data.RelatedTopics.slice(0, 4)) {
-                        if (topic.Text && topic.FirstURL) {
-                            results.push({
-                                title: topic.Text.split(' - ')[0] || 'Result',
-                                snippet: topic.Text,
-                                url: topic.FirstURL
-                            });
-
-                            console.log(results)
-                        }
-                    }
-                }
-
-                return results;
-            } catch (error) {
-                console.error('Search error:', error);
-                return [];
-            }
-        }
-
-        // Format search results for the AI
-        function formatSearchResults(results) {
-            if (!results || results.length === 0) {
-                return "No search results found.";
-            }
-            
-            let formatted = "Here are some web search results:\n\n";
-            
-            results.forEach((result, index) => {
-                formatted += `${index + 1}. ${result.title}\n`;
-                formatted += `   ${result.snippet}\n`;
-                formatted += `   Source: ${result.url}\n\n`;
-            });
-            
-            formatted += "Based on these search results, please answer the user's question.\n\n";
-            
-            return formatted;
-        }
-
-        // Show search indicator
         function showSearchIndicator() {
             const searchDiv = document.createElement('div');
             searchDiv.id = 'searchIndicator';
@@ -145,6 +97,30 @@
         // Detect if model is instruct or base
         function isInstructModel(modelName) {
             return modelName.includes('instruct') || modelName.includes('chat');
+        }
+
+        async function loadEmbeddingModels() {
+            try {
+                const response = await fetch(`${OLLAMA_URL}/api/tags`);
+                const data = await response.json();
+
+                embeddingModelSelect.innerHTML = '';
+
+                if (data.models && data.models.length > 0) {
+                    data.models.forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model.name;
+                        option.textContent = model.name;
+                        embeddingModelSelect.appendChild(option);
+                    });
+                    currentModel = data.models[0].name;
+                } else {
+                    modelSelect.innerHTML = '<option value="">No models found</option>';
+                }
+            } catch (error) {
+    
+            }
+        
         }
 
         // Load available models
@@ -264,41 +240,16 @@
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
+
         async function sendMessage() {
             const message = userInput.value.trim();
             if (!message || !currentModel) return;
 
-            const searchEnabled = webSearch.checked;
+            const bSearchEnabled = webSearch.checked;
 
             addMessage(message, true, 0, 0);
             userInput.value = '';
             sendBtn.disabled = true;
-
-            let finalPrompt = message;
-            let searchContext = '';
-
-            // Perform web search if enabled
-            if (searchEnabled) {
-                showSearchIndicator();
-                const searchResults = await performWebSearch(message);
-                removeSearchIndicator();
-                
-                if (searchResults.length > 0) {
-                    searchContext = formatSearchResults(searchResults);
-                    
-                    // Show search results to user
-                    const resultsDiv = document.createElement('div');
-                    resultsDiv.className = 'message assistant';
-                    resultsDiv.innerHTML = `
-                        <div class="message-avatar">🔍</div>
-                        <div class="message-content" style="font-size: 13px; color: #6b7280;">
-                            Found ${searchResults.length} result${searchResults.length > 1 ? 's' : ''}
-                        </div>
-                    `;
-                    chatArea.appendChild(resultsDiv);
-                    chatArea.scrollTop = chatArea.scrollHeight;
-                }
-            }
 
             showLoading();
 
@@ -306,19 +257,12 @@
                 let response;
                 
                 if (chatMode.checked) {
-                    // Chat mode - use chat API with history
-                    
-                    // If search is enabled, add search context to the user message
-                    const userMessage = searchEnabled && searchContext 
-                        ? searchContext + "User question: " + message
-                        : message;
-                    
                     conversationHistory.push({
                         role: 'user',
-                        content: userMessage
+                        content: message
                     });
 
-                    response = await fetch(`${OLLAMA_URL}/api/chat`, {
+                    response = await fetch(`http://localhost:5000/chat`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -326,27 +270,10 @@
                         body: JSON.stringify({
                             model: currentModel,
                             messages: conversationHistory,
-                            stream: false
+                            search: bSearchEnabled
                         })
                     });
-                } else {
-                    // Completion mode - for base models
-                    finalPrompt = searchEnabled && searchContext 
-                        ? searchContext + message
-                        : message;
-                    
-                    response = await fetch(`${OLLAMA_URL}/api/generate`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            model: currentModel,
-                            prompt: finalPrompt,
-                            stream: false
-                        })
-                    });
-                }
+                } 
 
                 removeLoading();
 
@@ -355,10 +282,9 @@
                 }
 
                 const data = await response.json();
-                const aiResponse = data.message?.content || data.response;
-                const totalTokens = (data.eval_count || 0) + (data.prompt_eval_count || 0);
-                const totalTime = (data.total_duration || 0) / 1e9;
-
+                const aiResponse = data.response;
+                const totalTokens = data.tokens;
+                const totalTime = data.time;
                 
                 if (chatMode.checked) {
                     conversationHistory.push({
@@ -371,7 +297,7 @@
 
             } catch (error) {
                 removeLoading();
-                showError(`Error: ${error.message}. Make sure Ollama is running.`);
+                showError(`Error: ${error.message}`);
             } finally {
                 sendBtn.disabled = false;
                 userInput.focus();
@@ -387,6 +313,7 @@
 
         // Load models on startup
         loadModels();
+        loadEmbeddingModels();
     </script>
 </body>
 </html>
