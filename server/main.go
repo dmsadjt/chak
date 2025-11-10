@@ -32,7 +32,7 @@ func main() {
 	promptManager := prompt.NewPromptManager()
 	ollamaManager := ollama.NewDefaultOllamaManager("http://localhost:11434")
 	embeddingManager := embedding.NewOllamaEmbedding("all-minilm:33m","http://localhost:11434")
-	memoryManager := memory.NewMemoryManager(embeddingManager)
+	memoryManager := memory.NewMemoryManager(embeddingManager, "memory.json")
 
 	chatManager := handler.NewChatHandlerManager(searchManager, promptManager, ollamaManager, memoryManager)
 

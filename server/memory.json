@@ -1,0 +1,56 @@
+[
+  {
+    "SzId": "mem_1762785158572305200",
+    "SzContent": "Hello Muhammad Dimas Adijanto! Nice to meet you. It's great that you like the color white. Is there anything specific about the color white that you particularly enjoy?",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-10T21:32:38+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762785175767948300",
+    "SzContent": "That's a lovely perspective on the color white. Its purity and versatility certainly make it a versatile choice for many applications, whether in art, design, or personal preference.",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-10T21:32:55+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762785182389028600",
+    "SzContent": "1 + 1 equals 2.",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-10T21:33:02+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762785191521591300",
+    "SzContent": "The square root of 332 is approximately 18.22.",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-10T21:33:11+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762785197001613900",
+    "SzContent": "Your name is Muhammad Dimas Adijanto.",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-10T21:33:16+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762785211888896800",
+    "SzContent": "Great! Is there anything specific you'd like to discuss or any questions you have?",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-10T21:33:31+07:00"
+    }
+  }
+]

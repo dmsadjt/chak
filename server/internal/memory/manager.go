@@ -3,8 +3,10 @@ package memory
 import (
 	"chak-server/internal/embedding"
 	"context"
+	"encoding/json"
 	"fmt"
 	"math"
+	"os"
 	"sync"
 	"time"
 )
@@ -13,6 +15,7 @@ type MemoryManager struct {
 	embedder embedding.EmbeddingInterface
 	memories []MemoryEntry
 	mu sync.RWMutex
+	szFilename string
 }
 
 type scoredMemory struct {
@@ -20,16 +23,56 @@ type scoredMemory struct {
 	score float64
 }
 
-func NewMemoryManager(embedder embedding.EmbeddingInterface) *MemoryManager {
-	return &MemoryManager{
+func NewMemoryManager(embedder embedding.EmbeddingInterface, szFilename string) *MemoryManager {
+	manager := &MemoryManager{
 		embedder: embedder,
 		memories: []MemoryEntry{},
+		szFilename: szFilename,
 	}
+	
+	manager.LoadFromFile()
+	
+	return manager
+}
+
+func (memoryManager *MemoryManager) LoadFromFile() error {
+	data, err := os.ReadFile(memoryManager.szFilename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			fmt.Printf("No existing memory file, starting fresh \n")
+			return nil
+		}
+		return err
+	}
+
+	memoryManager.mu.Lock()
+	defer memoryManager.mu.Unlock()
+
+	err = json.Unmarshal(data, &memoryManager.memories)	
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Loaded %d memories from %s\n", len(memoryManager.memories), memoryManager.szFilename)
+	return nil
+}
+
+func (memoryManager *MemoryManager) SaveToFile() error {
+	memoryManager.mu.RLock()
+	defer memoryManager.mu.RUnlock()
+
+	data, err := json.MarshalIndent(memoryManager.memories, "", "  ")	
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(memoryManager.szFilename, data, 0644)
 }
 
 func (memoryMgr *MemoryManager) SaveMemory(ctx context.Context, szText string, metadataMap map[string]string) error {
 	vector, err := memoryMgr.embedder.EmbedText(ctx, szText)
 	if err != nil {
+		fmt.Printf("ERROR Embedding: %v\n", err)
 		return err
 	}
 
@@ -43,6 +86,13 @@ func (memoryMgr *MemoryManager) SaveMemory(ctx context.Context, szText string, m
 	memoryMgr.mu.Lock()
 	memoryMgr.memories = append(memoryMgr.memories, memoryEntry)
 	memoryMgr.mu.Unlock()
+
+	err = memoryMgr.SaveToFile()
+	if err != nil {
+		fmt.Printf("Error saving to file: %v\n", err)
+	} else {
+		fmt.Printf("Saved to file %s\n\n", memoryMgr.szFilename)
+	}
 
 	return nil
 }
@@ -58,6 +108,11 @@ func (memoryMgr *MemoryManager) RetrieveRelevantContext(ctx context.Context, szQ
 
 	for _, mem := range memoryMgr.memories {
 		similarity := cosineSimilarity(queryVector, mem.FlVector)
+
+		preview := mem.SzContent
+		if len(preview) > 60 {
+			preview = preview[:60] + "..."
+		}
 		scores = append(scores, scoredMemory{
 			memory: mem,
 			score: similarity,
@@ -76,6 +131,10 @@ func (memoryMgr *MemoryManager) RetrieveRelevantContext(ctx context.Context, szQ
 	results := make([]MemoryEntry, topK)
 	for i := 0; i < topK; i++ {
 		results[i] = scores[i].memory
+		preview := results[i].SzContent
+		if len(preview) > 80 {
+			preview = preview[:80] + "..."
+		}
 	}
 
 	return results, nil
@@ -106,8 +165,6 @@ func sortByScore(scores []scoredMemory) {
 		}
 	}
 }
-
-
 
 func generateID() string {
 	return fmt.Sprintf("mem_%d", time.Now().UnixNano())

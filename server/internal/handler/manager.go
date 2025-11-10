@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 )
 
 const MaxRememberedMessages = 10
@@ -94,6 +95,15 @@ func (chatManager *ChatHandlerManager) HandleChat(w http.ResponseWriter, r *http
 	if err != nil {
 		http.Error(w, "Ollama error", http.StatusInternalServerError)
 		return
+	}
+
+	metadata := map[string]string {
+		"role":"user",
+		"timestamp": time.Now().Format(time.RFC3339),
+	}
+
+	if err := chatManager.memoryManager.SaveMemory(ctx, ollamaResp.SzResponse, metadata); err != nil {
+		log.Printf("Error saving assistant memory: %v", err)
 	}
 
 	resp := ChatResponse {

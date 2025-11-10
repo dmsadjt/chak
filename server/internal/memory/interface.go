@@ -5,6 +5,8 @@ import "context"
 type MemoryInterface interface {
 	SaveMemory(ctx context.Context, szText string, metadataMap map[string]string) error
 	RetrieveRelevantContext(ctx context.Context, szQuery string, iTopK int) ([]MemoryEntry, error)
+	LoadFromFile() error
+	SaveToFile() error
 }
 
 type MemoryEntry struct {
