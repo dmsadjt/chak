@@ -52,5 +52,41 @@
       "role": "user",
       "timestamp": "2025-11-10T21:33:31+07:00"
     }
+  },
+  {
+    "SzId": "mem_1762814359130716900",
+    "SzContent": "You didn't mention your name in our previous conversation, so I don't know your name. However, earlier we were discussing the color white with a person named Muhammad Dimas Adijanto. If that's your name, then yes, I do know it!",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-11T05:39:19+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762814404103421600",
+    "SzContent": "Great to meet you! I'm here to assist you with any questions or tasks you need help with. How can I be of service today?",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-11T05:40:04+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762814419159073200",
+    "SzContent": "Based on our previous conversation, you mentioned that you like the color white. So, yes, I do remember your favorite color is white! Is there anything specific related to the color white or any other topic you'd like to discuss today?",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-11T05:40:19+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762814424535200400",
+    "SzContent": "Great! Is there anything specific you'd like to talk about or any questions you have in mind?",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-11T05:40:24+07:00"
+    }
   }
 ]
