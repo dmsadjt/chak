@@ -294,3 +294,38 @@ body {
   background-color: #2196F3;
 }
 
+/* Gaya untuk feedback container */
+.message-feedback {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+/* Gaya dasar tombol umpan balik */
+.feedback-button {
+    background: none;
+    border: 1px solid #ccc;
+    color: #666;
+    padding: 5px 10px;
+    border-radius: 50%; /* Membuat tombol lingkaran */
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    line-height: 1; /* Penting untuk penataan ikon */
+}
+
+.feedback-button:hover {
+    border-color: #555;
+    color: #555;
+}
+
+/* Efek saat tombol disukai/ditekan (opsional) */
+.feedback-button.thumb-up:hover {
+    color: #4CAF50; /* Hijau */
+    border-color: #4CAF50;
+}
+
+.feedback-button.thumb-down:hover {
+    color: #f44336; /* Merah */
+    border-color: #f44336;
+}
