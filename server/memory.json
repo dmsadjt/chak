@@ -88,5 +88,86 @@
       "role": "user",
       "timestamp": "2025-11-11T05:40:24+07:00"
     }
+  },
+  {
+    "SzId": "mem_1762871786282575600",
+    "SzContent": "Hello! How can I assist you today?",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-11T21:36:25+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762871837294594700",
+    "SzContent": "I don't remember your name, but I'd be happy to learn it if you'd like to share it with me! 😊",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-11T21:37:16+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762871875577371800",
+    "SzContent": "I don't have access to personal information about individuals unless it's shared with me. Could you please introduce yourself or provide details about who you are? 😊",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-11T21:37:55+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762871891994475000",
+    "SzContent": "You are Muhammad Dimas Adijanto. You were discussing your liking for the color white and its properties with someone.",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-11T21:38:11+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762871913800118200",
+    "SzContent": "It seems there might be a bit of confusion. The memory you provided about the color white was in a different conversation context and doesn't directly relate to your name. As for why the model might not remember your name, it's likely due to how the system handles conversations. Each interaction is typically treated separately, so information from one conversation isn't automatically carried over to another unless explicitly remembered by the user or contextually relevant in the new conversation.\n\nThe \"Q4\" you mentioned could refer to a quarter of the year, but in this context, it doesn't seem to be related to the model's ability to remember names. If you're using an AI model like Qwen, your name isn't typically stored unless you introduce yourself at the start of each conversation or if you've interacted with a system that maintains user sessions.\n\nIf you'd like me to remember your name for this conversation, just let me know it again!",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-11T21:38:33+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762872002795900400",
+    "SzContent": "Your name is Muhammad Dimas Adijanto.",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-11T21:40:02+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762902629038267600",
+    "SzContent": "You are Muhammad Dimas Adijanto. You mentioned that you like the color white and discussed its properties such as purity and versatility.",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-12T06:10:29+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762902647860882700",
+    "SzContent": "To determine if your personal information is available online, you can follow some steps based on the search results:\n\n1. **Search for Your Name and Address**: Use a search engine to look for quotes around \"Your Name + Your Address Number\". This can help identify services that might have published this information.\n\n2. **Check Google Search Results**: Follow the tips provided in Result 3 to see if your personal contact information is listed in Google Search results. You can use the tools available on Google's Help Center to check for and remove any of your personal data from search results.\n\n3. **Use Privacy Tools**: Consider using privacy testing tools like the one mentioned in Result 1, which can list various pieces of information a website might collect about you during a web visit.\n\n4. **Be Aware of Publicly Available Information**: As mentioned in Result 4, there is a good chance that your personal information could be available online due to various reasons such as public records, social media, and other sources.\n\n5. **Monitor Your Online Presence**: Regularly check for any unauthorized or inaccurate information about you on the internet. This can help you take action if necessary, such as contacting websites or services to have incorrect data removed.\n\nBy following these steps, you can better understand what personal information might be available online and take measures to protect your privacy.",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-12T06:10:47+07:00"
+    }
+  },
+  {
+    "SzId": "mem_1762902666064371100",
+    "SzContent": "Based on the search results, `dmsadjt` appears to be a student in the Information Systems Department. They identify themselves as a web developer and mobile developer, actively engaged in learning and problem-solving. You can find more about their personal website [here](https://dmsadjt.github.io/), where they share information about their interests and background.\n\nHere are some key points from the search result:\n\n- **Identity**: `dmsadjt` is a student.\n- **Professional Interests**: They are involved in web development and mobile development.\n- **Personal Description**: The description mentions that they are a \"dreamer, problem solver, and a passionate learner.\"\n- **Online Presence**: You can visit their personal website to learn more about their projects and interests.",
+    "FlVector": null,
+    "MetadataMap": {
+      "role": "user",
+      "timestamp": "2025-11-12T06:11:06+07:00"
+    }
   }
 ]
