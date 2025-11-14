@@ -24,17 +24,17 @@ func NewOllamaEmbedding(szModel, szHost string) *OllamaEmbedding {
 
 type ollamaEmbedRequest struct {
 	SzModel string `json:"model"`
-	SzInput string `json:"input"`
+	SzInput []string `json:"input"`
 }
 
 type ollamaEmbedResponse struct {
-	SzEmbedding []float32 `json:"embedding"`
+	SzEmbedding [][]float32 `json:"embeddings"`
 }
 
 func (ollamaEmbed *OllamaEmbedding) EmbedText(ctx context.Context, szText string) ([]float32, error) {
 	reqBody, _ := json.Marshal(ollamaEmbedRequest{
 		SzModel: ollamaEmbed.SzModel,
-		SzInput: szText,
+		SzInput: []string{szText},
 	})
 
 	req, err := http.NewRequestWithContext(ctx, "POST", fmt.Sprintf("%s/api/embed", ollamaEmbed.SzHost), bytes.NewBuffer(reqBody))
@@ -56,5 +56,9 @@ func (ollamaEmbed *OllamaEmbedding) EmbedText(ctx context.Context, szText string
 		return nil, err
 	}
 
-	return res.SzEmbedding, nil
+	if len(res.SzEmbedding) == 0 {
+		return nil, fmt.Errorf("no embeddings returned")
+	}
+
+	return res.SzEmbedding[0], nil
 }
