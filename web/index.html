@@ -14,10 +14,6 @@
                 <h1>Chak's Setting</h1>
             </div>
             <div class="sidebar-body">
-                <h2 style>Embedding Model</h2>
-                <select id="embeddingModelSelect" class="model-select">
-                    <option value="">Loading embedding models...</option>
-                </select>
                 <h2>Chat Model</h2>
                 <select id="modelSelect" class="model-select">
                     <option value="">Loading models...</option>
@@ -72,7 +68,6 @@
         const modelSelect = document.getElementById('modelSelect');
         const chatMode = document.getElementById('chatMode');
         const webSearch = document.getElementById('webSearch');
-        const embeddingModelSelect = document.getElementById('embeddingModelSelect');
 
         let currentModel = '';
         let conversationHistory = [];
@@ -105,14 +100,12 @@
                 const response = await fetch(`${OLLAMA_URL}/api/tags`);
                 const data = await response.json();
 
-                embeddingModelSelect.innerHTML = '';
 
                 if (data.models && data.models.length > 0) {
                     data.models.forEach(model => {
                         const option = document.createElement('option');
                         option.value = model.name;
                         option.textContent = model.name;
-                        embeddingModelSelect.appendChild(option);
                     });
                     currentModel = data.models[0].name;
                 } else {
