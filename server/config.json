@@ -1,0 +1,47 @@
+{
+  "active_profile": "coding",
+  "profiles": {
+    "coding": {
+      "name": "Coding Assistant",
+      "description": "Programming help and code examples",
+      "directories": [
+        "./documents/coding"
+      ],
+      "memory_file": "memory_coding.json",
+      "index_file": "index_coding.json",
+      "extensions": [
+        ".txt",
+        ".md"
+      ],
+      "max_file_size": 5242880
+    },
+    "general": {
+      "name": "General Knowledge",
+      "description": "Everything else",
+      "directories": [
+        "./documents/general"
+      ],
+      "memory_file": "memory_general.json",
+      "index_file": "index_general.json",
+      "extensions": [
+        ".txt",
+        ".md"
+      ],
+      "max_file_size": 5242880
+    },
+    "paperwork": {
+      "name": "Paperwork Helper",
+      "description": "Invoices, contracts, and business docs",
+      "directories": [
+        "./documents/paperwork"
+      ],
+      "memory_file": "memory_paperwork.json",
+      "index_file": "index_paperwork.json",
+      "extensions": [
+        ".txt",
+        ".md"
+      ],
+      "max_file_size": 5242880
+    }
+  }
+}

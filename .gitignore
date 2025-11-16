@@ -1,2 +1,12 @@
 .env
 /server/memory.json
+/server/index.json
+/server/documents/*
+!server/documents/**/
+/server/index.json
+/server/index_coding.json
+/server/index_general.json
+/server/index_paperwork.json
+/server/memory_coding.json
+/server/memory_general.json
+/server/memory_paperwork.json
