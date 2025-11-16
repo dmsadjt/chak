@@ -1,1 +1,0 @@
-I am currently working on a LLM Wrapper. Using golang for the backend services and html for the front-end. Might be moving to htmx later.

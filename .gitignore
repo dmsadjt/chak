@@ -3,6 +3,8 @@
 /server/index.json
 /server/documents/*
 !server/documents/**/
+server/documents/**/*
+!server/documents/**/
 /server/index.json
 /server/index_coding.json
 /server/index_general.json
