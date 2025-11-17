@@ -1,6 +1,7 @@
 package config
 
 type Profile struct {
+	SzID string `json:"id"`
 	SzName string `json:"name"`
 	SzDescription string `json:"description"`
 	SzDirectories []string `json:"directories"`

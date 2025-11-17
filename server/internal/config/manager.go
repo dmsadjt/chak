@@ -27,7 +27,7 @@ func NewConfigManager(szConfigFilePath string) *ConfigManager {
 func (cfgMgr *ConfigManager) loadConfig() error {
 	data, err := os.ReadFile(cfgMgr.szConfigFilePath)
 	if err != nil {
-		fmt.Printf("Failed to load config: %w\n", err)
+		fmt.Printf("Failed to load config: %w \n", err)
 		return nil
 	}
 	return json.Unmarshal(data, &cfgMgr.config)
@@ -39,18 +39,18 @@ func (cfgMgr *ConfigManager) GetActiveProfile() Profile {
 	return cfgMgr.config.Profiles[cfgMgr.config.SzActiveProfile]
 }
 
-func (cfgMgr *ConfigManager) SwitchProfile(szName string) error {
+func (cfgMgr *ConfigManager) SwitchProfile(szID string) error {
 	cfgMgr.mu.Lock()
 	defer cfgMgr.mu.Unlock()
-	if szName == "" {
+	if szID == "" {
 		return fmt.Errorf("profile name cannot be empty")
 	}
 
-	if _, exists := cfgMgr.config.Profiles[szName]; !exists {
-		return fmt.Errorf("profile '%s' not found", szName)
+	if _, exists := cfgMgr.config.Profiles[szID]; !exists {
+		return fmt.Errorf("profile '%s' not found", szID)
 	}
 
-	cfgMgr.config.SzActiveProfile = szName
+	cfgMgr.config.SzActiveProfile = szID
 	return cfgMgr.saveConfig()
 }
 
@@ -68,7 +68,8 @@ func (cfgMgr *ConfigManager) ListProfile() []Profile {
 	defer cfgMgr.mu.RUnlock()
 
 	profiles := make([]Profile, 0, len(cfgMgr.config.Profiles))
-	for _, profile := range cfgMgr.config.Profiles {
+	for key, profile := range cfgMgr.config.Profiles {
+		profile.SzID = key
 		profiles = append(profiles, profile)
 	}
 

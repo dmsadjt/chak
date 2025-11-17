@@ -18,6 +18,14 @@
                 <select id="modelSelect" class="model-select">
                     <option value="">Loading models...</option>
                 </select>
+
+                <div class="profile-selector">
+                    <label for="profileSelect">Profile:
+                        <select id="profileSelect" name="profile">
+                            <option value="">Loading...</option>
+                        </select>
+                    </label>
+                </div>
             </div>
         </div>
         <div class="chat-bar">
@@ -68,10 +76,71 @@
         const modelSelect = document.getElementById('modelSelect');
         const chatMode = document.getElementById('chatMode');
         const webSearch = document.getElementById('webSearch');
+        const profileSelect = document.getElementById('profileSelect');
 
         let currentModel = '';
         let conversationHistory = [];
         const OLLAMA_URL = 'http://localhost:11434';
+
+        async function loadProfiles() {
+            try {
+                const response = await fetch('http://localhost:5000/profiles')
+                const profiles = await response.json();
+
+                const activeResponse = await fetch('http://localhost:5000/profile/active')
+                const activeProfile = await activeResponse.json();
+
+                profileSelect.innerHTML = '';
+
+                profiles.forEach(profile => {
+                    const option = document.createElement('option');
+                    option.value = profile.id;
+                    option.textContent = `${profile.name} - ${profile.description}`;
+
+                    if (profile.name === activeProfile.name) {
+                        option.selected = true;
+                    }
+
+                    profileSelect.appendChild(option);
+                })
+            } catch (error) {
+                console.error('Failed to load profiles:', error);
+                profileSelect.innerHTML = '<option>Error loading profiles</option>';
+            }
+        }
+
+        profileSelect.addEventListener('change', async (e) => {
+            const profileName = e.target.value;
+
+            try {
+                const response = await fetch('http://localhost:5000/profile/switch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json'},
+                    body: JSON.stringify({ profile_name: profileName })
+                });
+
+                const result = await response.json();
+                if (result.status === 'success') {
+                    console.log('Switched to:', result.active_profile.name);
+                    alert(`Switched to ${result.active_profile.name} profile!\n\nNote: Restart server to fully apply changes.`);
+                }
+            } catch (error) {
+                console.error('Failed to switch profile:', error);
+                alert('Failed to switch profile.');
+            }
+
+        });
+
+
+        document.body.addEventListener("htmx:afterOnLoad", function(evt) {
+            if (evt.detail.elt.id === "profileSelect") {
+                const data = JSON.parse(evt.detail.xhr.responseText);
+
+                evt.detail.elt.innerHTML = data.map(item =>
+                    `<option value="${item.name}">${item.name}</option>`
+                ).join("");
+            }
+        });
 
         function showSearchIndicator() {
             const searchDiv = document.createElement('div');
@@ -336,6 +405,7 @@
         // Load models on startup
         loadModels();
         loadEmbeddingModels();
+        loadProfiles();
     </script>
 </body>
-</html>
+</html
