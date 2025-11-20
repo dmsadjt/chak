@@ -131,16 +131,37 @@ body {
 }
 
 .message-content pre {
-  background: #1e1e1e;
+  background: #F1ECCE;
+  margin: 4px;
   color: #e0e0e0;
   padding: 10px;
-  border-radius: 8px;
   overflow-x: auto;
   font-family: monospace;
 }
 
 .message-content code {
-  color: #facc15;
+  color: black;
+}
+
+/* Lists styling */
+.message-content ul, 
+.message-content ol {
+    margin: 10px 0;
+    padding-left: 24px;  /* Proper indentation for bullets/numbers */
+}
+
+.message-content li {
+    margin: 4px 0;
+    line-height: 1.6;
+}
+
+/* Nested lists */
+.message-content ul ul,
+.message-content ol ol,
+.message-content ul ol,
+.message-content ol ul {
+    margin: 4px 0;
+    padding-left: 20px;
 }
 
 .message.user .message-content {
