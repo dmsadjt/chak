@@ -60,6 +60,26 @@ func (idxMgr *IndexerManager) IndexAll() error {
 		return fmt.Errorf("Error scanning files: %w", err)
 	}
 
+	existingPaths := make(map[string]bool)
+	for _, file := range files {
+		existingPaths[file.SzPath] = true
+	}
+
+	var deletedPaths []string
+	for indexedPath := range idxMgr.indexedFilesMap {
+		if !existingPaths[indexedPath] {
+			deletedPaths = append(deletedPaths, indexedPath)
+		}
+	}
+
+	for _, path := range deletedPaths {
+		log.Printf("Cleaning up deleted file %s", path)
+		if err := idxMgr.memoryMgr.DeleteMemoriesByMetadata("filepath", path); err != nil {
+			log.Printf("Failed to delete memory %s: %v \n", path, err)
+		}
+		delete(idxMgr.indexedFilesMap, path)
+	}
+
 	log.Printf("Found %d files\n", len(files))
 
 	if len(files) == 0 {
@@ -84,10 +104,10 @@ func (idxMgr *IndexerManager) IndexAll() error {
 		}
 	}
 
-	log.Printf("✅ Indexed: %d files, Skipped: %d files (unchanged)\n", inIndexed, inSkipped)
+	log.Printf("Indexed: %d files, Skipped: %d files (unchanged)\n", inIndexed, inSkipped)
 	
 	if err := idxMgr.saveIndexState(); err != nil {
-		log.Printf("⚠️  Warning: Failed to save index state: %v\n", err)
+		log.Printf("Warning: Failed to save index state: %v\n", err)
 	}
 
 	return nil
@@ -104,6 +124,11 @@ func (idxMgr *IndexerManager) saveIndexState() error {
 
 func (idxMgr *IndexerManager) indexFile(ctx context.Context, file FileInfo) error {
 	log.Printf("Indexing %s\n", file.SzName)
+
+
+	if err := idxMgr.memoryMgr.DeleteMemoriesByMetadata("filepath", file.SzPath); err != nil {
+		log.Printf("Warning: failed to delete old memories for %s: %v\n", file.SzPath, err)
+	}
 
 	content, err := os.ReadFile(file.SzPath)
 	if err != nil {

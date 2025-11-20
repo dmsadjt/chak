@@ -35,8 +35,8 @@ func NewMemoryManager(embedder embedding.EmbeddingInterface, szFilename string) 
 	return manager
 }
 
-func (memoryManager *MemoryManager) LoadFromFile() error {
-	data, err := os.ReadFile(memoryManager.szFilename)
+func (memoryMgr *MemoryManager) LoadFromFile() error {
+	data, err := os.ReadFile(memoryMgr.szFilename)
 	if err != nil {
 		if os.IsNotExist(err) {
 			fmt.Printf("No existing memory file, starting fresh \n")
@@ -45,28 +45,28 @@ func (memoryManager *MemoryManager) LoadFromFile() error {
 		return err
 	}
 
-	memoryManager.mu.Lock()
-	defer memoryManager.mu.Unlock()
+	memoryMgr.mu.Lock()
+	defer memoryMgr.mu.Unlock()
 
-	err = json.Unmarshal(data, &memoryManager.memories)	
+	err = json.Unmarshal(data, &memoryMgr.memories)	
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Loaded %d memories from %s\n", len(memoryManager.memories), memoryManager.szFilename)
+	fmt.Printf("Loaded %d memories from %s\n", len(memoryMgr.memories), memoryMgr.szFilename)
 	return nil
 }
 
-func (memoryManager *MemoryManager) SaveToFile() error {
-	memoryManager.mu.RLock()
-	defer memoryManager.mu.RUnlock()
+func (memoryMgr *MemoryManager) SaveToFile() error {
+	memoryMgr.mu.RLock()
+	defer memoryMgr.mu.RUnlock()
 
-	data, err := json.MarshalIndent(memoryManager.memories, "", "  ")	
+	data, err := json.MarshalIndent(memoryMgr.memories, "", "  ")	
 	if err != nil {
 		return err
 	}
 
-	return os.WriteFile(memoryManager.szFilename, data, 0644)
+	return os.WriteFile(memoryMgr.szFilename, data, 0644)
 }
 
 func (memoryMgr *MemoryManager) SaveMemory(ctx context.Context, szText string, metadataMap map[string]string) error {
@@ -168,4 +168,27 @@ func sortByScore(scores []scoredMemory) {
 
 func generateID() string {
 	return fmt.Sprintf("mem_%d", time.Now().UnixNano())
+}
+
+func (memoryMgr *MemoryManager) DeleteMemoriesByMetadata(szKey string, szValue string) error {
+	memoryMgr.mu.Lock()
+
+	filteredMemoryList := make([]MemoryEntry, 0, len(memoryMgr.memories))
+	for _, memory := range memoryMgr.memories {
+		if memory.MetadataMap[szKey] != szValue {
+			filteredMemoryList = append(filteredMemoryList, memory)
+		}
+	}
+
+	memoryMgr.memories = filteredMemoryList
+	memoryMgr.mu.Unlock()
+
+	err := memoryMgr.SaveToFile()
+	if err != nil {
+		fmt.Printf("Error saving to file: %v\n", err)
+	} else {
+		fmt.Printf("Saved to file %s\n\n", memoryMgr.szFilename)
+	}
+
+	return nil
 }

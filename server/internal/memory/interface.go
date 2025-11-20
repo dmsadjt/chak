@@ -7,6 +7,7 @@ type MemoryInterface interface {
 	RetrieveRelevantContext(ctx context.Context, szQuery string, iTopK int) ([]MemoryEntry, error)
 	LoadFromFile() error
 	SaveToFile() error
+	DeleteMemoriesByMetadata(szKey string, szValue string) error
 }
 
 type MemoryEntry struct {
