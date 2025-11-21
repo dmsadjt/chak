@@ -5,6 +5,7 @@ import (
 	"chak-server/internal/search"
 	"chak-server/internal/types"
 	"fmt"
+	"time"
 )
 
 type PromptManager struct {}
@@ -15,6 +16,8 @@ func NewPromptManager() *PromptManager {
 
 func (promptMgr *PromptManager) Build(messageList []types.Message , searchResultData []search.SearchResultData, memories []memory.MemoryEntry) string {
 	prompt := ""
+
+	prompt += fmt.Sprintf("Current date and time: %s\n\n", time.Now().Format(time.RFC1123))
 
 	if len(memories) > 0 {
 		prompt += "=== RELEVANT PAST CONVERSATION ===\n\n"

@@ -125,7 +125,7 @@ func (idxMgr *IndexerManager) saveIndexState() error {
 func (idxMgr *IndexerManager) indexFile(ctx context.Context, file FileInfo) error {
 	log.Printf("Indexing %s\n", file.SzName)
 
-
+	log.Println("Deleting unused memories...")
 	if err := idxMgr.memoryMgr.DeleteMemoriesByMetadata("filepath", file.SzPath); err != nil {
 		log.Printf("Warning: failed to delete old memories for %s: %v\n", file.SzPath, err)
 	}
