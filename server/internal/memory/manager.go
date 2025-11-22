@@ -97,7 +97,7 @@ func (memoryMgr *MemoryManager) SaveMemory(ctx context.Context, szText string, m
 	return nil
 }
 
-func (memoryMgr *MemoryManager) RetrieveRelevantContext(ctx context.Context, szQuery string, iTopK int) ([]MemoryEntry, error) {
+func (memoryMgr *MemoryManager) RetrieveRelevantContext(ctx context.Context, szQuery string, iTopK int, szFilterType string) ([]MemoryEntry, error) {
 	queryVector, err := memoryMgr.embedder.EmbedText(ctx, szQuery)
 	if err != nil {
 		return nil, err
@@ -107,12 +107,17 @@ func (memoryMgr *MemoryManager) RetrieveRelevantContext(ctx context.Context, szQ
 	scores := make([]scoredMemory, 0, len(memoryMgr.memories))
 
 	for _, mem := range memoryMgr.memories {
+		if szFilterType != "" && mem.MetadataMap["type"] != szFilterType {
+			continue
+		}
+
 		similarity := cosineSimilarity(queryVector, mem.FlVector)
 
 		preview := mem.SzContent
 		if len(preview) > 60 {
 			preview = preview[:60] + "..."
 		}
+
 		scores = append(scores, scoredMemory{
 			memory: mem,
 			score: similarity,

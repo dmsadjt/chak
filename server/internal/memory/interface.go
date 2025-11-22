@@ -4,7 +4,7 @@ import "context"
 
 type MemoryInterface interface {
 	SaveMemory(ctx context.Context, szText string, metadataMap map[string]string) error
-	RetrieveRelevantContext(ctx context.Context, szQuery string, iTopK int) ([]MemoryEntry, error)
+	RetrieveRelevantContext(ctx context.Context, szQuery string, iTopK int, szFilterType string) ([]MemoryEntry, error)
 	LoadFromFile() error
 	SaveToFile() error
 	DeleteMemoriesByMetadata(szKey string, szValue string) error

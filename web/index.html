@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chak</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="header">
+                <button class="btn-menu" id="btn-menu">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <h1>Chak's Setting</h1>
             </div>
             <div class="sidebar-body">
@@ -27,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <div class="chat-bar">
+        <div class="chatbar" id="chatbar">
             <div class="header">
                 <h1>Chak</h1>
             </div>
@@ -51,7 +55,12 @@
                     <label class="toggle" style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
                         <input type="checkbox" id="webSearch" style="cursor: pointer;">
                         <span class="slider"></span>
-                        🔍 Web Search
+                        Web Search
+                    </label>
+                    <label class="toggle" style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
+                        <input type="checkbox" id="ragToggle" style="cursor: pointer;">
+                        <span class="slider"></span>
+                        RAG 
                     </label>
                 </div>
                 <div class="input-container">
@@ -75,7 +84,11 @@
         const modelSelect = document.getElementById('modelSelect');
         const chatMode = document.getElementById('chatMode');
         const webSearch = document.getElementById('webSearch');
+        const ragToggle = document.getElementById('ragToggle');
         const profileSelect = document.getElementById('profileSelect');
+        const btnMenu = document.getElementById('btn-menu');
+        const chatBar = document.getElementById('chatbar');
+        const sideBar = document.getElementById('sidebar');
 
         let currentModel = '';
         let conversationHistory = [];
@@ -107,6 +120,12 @@
                 profileSelect.innerHTML = '<option>Error loading profiles</option>';
             }
         }
+
+        /** REGION EVENT HANDLERS **/
+        btnMenu.addEventListener('click', (e) => {
+            chatBar.classList.toggle("expanded");
+            sideBar.classList.toggle("collapsed");
+        })
 
         profileSelect.addEventListener('change', async (e) => {
             const profileName = e.target.value;
@@ -336,6 +355,7 @@
             if (!message || !currentModel) return;
 
             const bSearchEnabled = webSearch.checked;
+            const bRagToggled = ragToggle.checked;
 
             addMessage(message, true, 0, 0);
             userInput.value = '';
@@ -360,7 +380,8 @@
                         body: JSON.stringify({
                             model: currentModel,
                             messages: conversationHistory,
-                            search: bSearchEnabled
+                            search: bSearchEnabled,
+                            rag: bRagToggled 
                         })
                     });
                 } 

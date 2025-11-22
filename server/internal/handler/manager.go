@@ -18,6 +18,7 @@ type ChatRequest struct {
     MessageList []types.Message `json:"messages"`
     Search bool   `json:"search"`
     Model  string `json:"model"`
+	Rag bool `json:"rag"`
 }
 
 type ChatResponse struct {
@@ -71,7 +72,12 @@ func (chatManager *ChatHandlerManager) HandleChat(w http.ResponseWriter, r *http
 	szLastMessage := messages[len(messages)-1].SzContent
 	ctx := r.Context()
 
-	relevantMemories, err := chatManager.memoryManager.RetrieveRelevantContext(ctx, szLastMessage, 3)
+	szFilterType := "conversation"
+	if req.Rag {
+		szFilterType = "document"
+	}
+
+	relevantMemories, err := chatManager.memoryManager.RetrieveRelevantContext(ctx, szLastMessage, 3, szFilterType)
 	if err != nil {
 		log.Printf("Memory retrieval error: %v", err)
 	}
@@ -98,7 +104,8 @@ func (chatManager *ChatHandlerManager) HandleChat(w http.ResponseWriter, r *http
 	}
 
 	metadata := map[string]string {
-		"role":"user",
+		"type":"conversation",
+		"role":"assistant",
 		"timestamp": time.Now().Format(time.RFC3339),
 	}
 
@@ -115,5 +122,3 @@ func (chatManager *ChatHandlerManager) HandleChat(w http.ResponseWriter, r *http
 
 	json.NewEncoder(w).Encode(resp)
 }
-	
-
