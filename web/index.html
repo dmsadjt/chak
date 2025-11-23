@@ -133,16 +133,19 @@
             try {
                 const response = await fetch('http://localhost:5000/profile/switch', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json'},
-                    body: JSON.stringify({ profile_name: profileName })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({profile_name: profileName})
                 });
 
                 const result = await response.json();
                 if (result.status === 'success') {
-                    console.log('Switched to:', result.active_profile.name);
-                    alert(`Switched to ${result.active_profile.name} profile!\n\nNote: Restart server to fully apply changes.`);
+                    if (result.hot_reloaded) {
+                        alert(`Switched to ${result.active_profile.name} profile!\n\n`)
+                    } else {
+                        alert(`Switched to ${result.active_profile.name} profile!`)
+                    }
                 }
-            } catch (error) {
+            } catch {
                 console.error('Failed to switch profile:', error);
                 alert('Failed to switch profile.');
             }
@@ -229,11 +232,9 @@
             }
         }
 
-        modelSelect.addEventListener('change', (e) => {
+        modelSelect.addEventListener('change', async (e) => {
             currentModel = e.target.value;
-            // Auto-toggle chat mode based on model type
             chatMode.checked = isInstructModel(currentModel);
-            // Clear history when switching models
             conversationHistory = [];
         });
 

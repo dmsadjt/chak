@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"math"
 	"os"
 	"sync"
@@ -33,6 +34,33 @@ func NewMemoryManager(embedder embedding.EmbeddingInterface, szFilename string) 
 	manager.LoadFromFile()
 	
 	return manager
+}
+
+func (memoryMgr *MemoryManager) Reload(szFilename string) error {
+	memoryMgr.mu.Lock()
+	defer memoryMgr.mu.Unlock()
+
+	log.Printf("Reloading memory from: %s", szFilename)
+
+	memoryMgr.szFilename = szFilename
+	memoryMgr.memories = []MemoryEntry{}
+
+	data, err := os.ReadFile(szFilename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			log.Printf("No existing memory file, starting fresh\n")
+			return nil
+		}
+		return err
+	}
+
+	err = json.Unmarshal(data, &memoryMgr.memories)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Reloaded %d memories from %s\n", len(memoryMgr.memories), szFilename)
+	return nil
 }
 
 func (memoryMgr *MemoryManager) LoadFromFile() error {

@@ -18,5 +18,6 @@ type ScannerInterface interface {
 type ManagerInterface interface {
 	IndexAll() error
 	StartWatcher(tmInterval time.Duration)
+	StopWatcher()
 }
 

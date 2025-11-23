@@ -8,6 +8,7 @@ type MemoryInterface interface {
 	LoadFromFile() error
 	SaveToFile() error
 	DeleteMemoriesByMetadata(szKey string, szValue string) error
+	Reload(szFilename string) error
 }
 
 type MemoryEntry struct {

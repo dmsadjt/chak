@@ -22,6 +22,8 @@ type IndexerManager struct {
 	memoryMgr memory.MemoryInterface
 	indexedFilesMap map[string]IndexedFile
 	szIndexFilePath string
+	ticker *time.Ticker
+	stopChan chan struct{}
 }
 
 func NewIndexerManager(scannerMgr ScannerInterface, memoryMgr memory.MemoryInterface, szIndexFile string) *IndexerManager {
@@ -30,6 +32,7 @@ func NewIndexerManager(scannerMgr ScannerInterface, memoryMgr memory.MemoryInter
 		memoryMgr: memoryMgr,
 		indexedFilesMap: make(map[string]IndexedFile),
 		szIndexFilePath: szIndexFile,
+		stopChan: make(chan struct{}),
 	}
 
 	idxMgr.loadIndexState()
@@ -38,18 +41,32 @@ func NewIndexerManager(scannerMgr ScannerInterface, memoryMgr memory.MemoryInter
 }
 
 func (idxMgr *IndexerManager) StartWatcher(tmInterval time.Duration) {
-	ticker := time.NewTicker(tmInterval)
+	idxMgr.ticker = time.NewTicker(tmInterval)
 
 	go func() {
-		for range ticker.C {
-			log.Println("Auto indexing check")
-			if err := idxMgr.IndexAll(); err != nil {
-				log.Printf("Auto indexing error: %v \n", err)
+		for {
+			select {
+			case <-idxMgr.ticker.C:
+				log.Printf("Auto indexing check...")
+				if err := idxMgr.IndexAll(); err != nil {
+					log.Printf("Auto indexing error: %v \n", err)
+				}
+			case <-idxMgr.stopChan:
+				log.Println("Stopping indexer watcher.")
+				return
 			}
 		}
 	}()
 
 	log.Printf("Watcher watching every %v\n", tmInterval)
+}
+
+func (idxMgr *IndexerManager) StopWatcher() {
+	if idxMgr.ticker != nil {
+		idxMgr.ticker.Stop()
+		close(idxMgr.stopChan)
+		log.Println("Indexer watcher stopped")
+	}
 }
 
 func (idxMgr *IndexerManager) IndexAll() error {

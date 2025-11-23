@@ -5,45 +5,56 @@ import (
 	"strings"
 )
 
-func ChunkText(szText string, inMaxChunkSize int) []string {
-
+func ChunkText(szText string, inMaxChunkSize int) []string {	
 	szText = strings.TrimSpace(szText)
-
+	
 	if szText == "" {
 		return []string{}
 	}
-
-	sentences := strings.Split(szText, ". ")
-
+	
+	parts := smartSplit(szText)
+	
+	if len(parts) == 0 {
+		return []string{}
+	}
+	
 	var chunks []string
 	var currentChunk strings.Builder
-
-	for i, sentence := range sentences {
-		sentence = strings.TrimSpace(sentence)
-		if sentence == "" {
+	
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if part == "" {
 			continue
 		}
-
-		if i < len(sentences) - 1 && !strings.HasSuffix(sentence, ".") {
-			sentence += "."
+		
+		if len(part) > inMaxChunkSize {
+			if currentChunk.Len() > 0 {
+				chunks = append(chunks, strings.TrimSpace(currentChunk.String()))
+				currentChunk.Reset()
+			}
+			
+			oversizedChunks := ChunkBySize(part, inMaxChunkSize)
+			chunks = append(chunks, oversizedChunks...)
+			continue
 		}
-
-		if currentChunk.Len() > 0 && currentChunk.Len() + len(sentence) + 1 > inMaxChunkSize {
+		
+		if currentChunk.Len() > 0 && currentChunk.Len() + len(part)+2 > inMaxChunkSize {
 			chunks = append(chunks, strings.TrimSpace(currentChunk.String()))
 			currentChunk.Reset()
 		}
-
+		
 		if currentChunk.Len() > 0 {
-			currentChunk.WriteString(" ")
+			currentChunk.WriteString("\n\n")
 		}
-		currentChunk.WriteString(sentence)
+		currentChunk.WriteString(part)
 	}
-
+	
 	if currentChunk.Len() > 0 {
 		chunks = append(chunks, strings.TrimSpace(currentChunk.String()))
 	}
-
+	
 	return chunks
+
 }
 
 func smartSplit(szText string) []string {
