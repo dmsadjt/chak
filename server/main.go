@@ -68,6 +68,8 @@ func (app *AppManagers) HotReloadProfile(szProfileName string) error {
 		newProfile.InMaxSizeFile,
 	)
 	app.indexerMgr = indexer.NewIndexerManager(newScanner, app.memoryMgr, newProfile.SzIndexFile)
+	log.Println("Starting watcher for the new profile...")
+	app.indexerMgr.StartWatcher(5 * time.Minute)
 
 	log.Println("Running initial indexing for new profile.")
 	if err := app.indexerMgr.IndexAll(); err != nil {
