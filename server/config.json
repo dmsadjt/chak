@@ -2,7 +2,7 @@
   "active_profile": "coding",
   "profiles": {
     "coding": {
-      "id": "",
+      "id": "coding",
       "name": "Coding Assistant",
       "description": "Programming help and code examples",
       "directories": [
@@ -17,7 +17,7 @@
       "max_file_size": 5242880
     },
     "general": {
-      "id": "",
+      "id": "general",
       "name": "General Knowledge",
       "description": "Everything else",
       "directories": [
@@ -32,7 +32,7 @@
       "max_file_size": 5242880
     },
     "paperwork": {
-      "id": "",
+      "id": "paperwork",
       "name": "Paperwork Helper",
       "description": "Invoices, contracts, and business docs",
       "directories": [
