@@ -60,10 +60,10 @@ func ChunkText(szText string, inMaxChunkSize int) []string {
 func smartSplit(szText string) []string {
 	var parts []string
 
-	headerRegex := regexp.MustCompile(`(?m)^#{1,6}]\s+.+$`)
+	headerRegex := regexp.MustCompile(`(?m)^#{1,6}\s+.+$`)
 	headerIndices := headerRegex.FindAllStringIndex(szText, -1)
 
-	if len(headerIndices) > 0 {
+	if len(headerIndices) == 0 {
 		return splitByParagraphsAndSentences(szText)
 	}
 

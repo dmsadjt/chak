@@ -74,6 +74,8 @@ func (app *AppManagers) HotReloadProfile(szProfileName string) error {
 		log.Printf("Indexing warning: %v", err)
 	}
 
+	app.indexerMgr.StartWatcher(5 * time.Minute)
+
 	app.chatMgr = handler.NewChatHandlerManager(
 		app.searchMgr,
 		app.promptMgr,
