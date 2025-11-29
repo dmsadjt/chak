@@ -68,6 +68,8 @@ func (app *AppManagers) HotReloadProfile(szProfileName string) error {
 		newProfile.InMaxSizeFile,
 	)
 	app.indexerMgr = indexer.NewIndexerManager(newScanner, app.memoryMgr, newProfile.SzIndexFile)
+	log.Println("Starting watcher for the new profile...")
+	app.indexerMgr.StartWatcher(5 * time.Minute)
 
 	log.Println("Running initial indexing for new profile.")
 	if err := app.indexerMgr.IndexAll(); err != nil {
@@ -91,6 +93,10 @@ func (app *AppManagers) HotReloadProfile(szProfileName string) error {
 func main() {
 	log.SetOutput(os.Stdout) 
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+	
+	szOllamaHost := os.Getenv("OLLAMA_HOST")
+	szOllamaPort := "11434"
+	szUrl := fmt.Sprintf("http://%s:%s", szOllamaHost, szOllamaPort)
 
 	configManager := config.NewConfigManager("config.json")
 	activeProfile := configManager.GetActiveProfile()
@@ -100,8 +106,8 @@ func main() {
 	szApiKey := os.Getenv("BRAVE_API_KEY")
 	searchManager := search.NewBraveManager(szApiKey)
 	promptManager := prompt.NewPromptManager()
-	ollamaManager := ollama.NewDefaultOllamaManager("http://localhost:11434")
-	embeddingManager := embedding.NewOllamaEmbedding("all-minilm:33m","http://localhost:11434")
+	ollamaManager := ollama.NewDefaultOllamaManager(szUrl)
+	embeddingManager := embedding.NewOllamaEmbedding("all-minilm:33m",szUrl)
 	memoryManager := memory.NewMemoryManager(embeddingManager, activeProfile.SzMemoryFile)
 
 	log.Println("Initalizing document indexer...")
